@@ -19,12 +19,12 @@ public class ClientGUI extends JFrame implements ClientView{
     private Client client;
 
     public ClientGUI(ServerWindow server){
-        this.client = new Client(this, server);
 
         setSize(WIDTH, HEIGHT);
         setResizable(false);
         setTitle("Chat client");
         setLocation(server.getX() - 500, server.getY());
+        this.client = new Client(this, server.getConnection());
 
         createPanel();
 
@@ -37,9 +37,9 @@ public class ClientGUI extends JFrame implements ClientView{
         }
     }
 
-    @Override
+
     public void showMessage(String text) {
-        appendLog(text);
+        log.append(text + "\n");
     }
 
     public void disconnectFromServer() {
@@ -51,13 +51,15 @@ public class ClientGUI extends JFrame implements ClientView{
         headerPanel.setVisible(visible);
     }
 
+    public void login(){
+        if (client.connectToServer(tfLogin.getText())){
+            headerPanel.setVisible(false);
+        }
+    }
+
     public void sendMessage(){
         client.sendMessage(tfMessage.getText());
         tfMessage.setText("");
-    }
-
-    private void appendLog(String text){
-        log.append(text + "\n");
     }
 
     private void createPanel() {
@@ -76,7 +78,7 @@ public class ClientGUI extends JFrame implements ClientView{
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                connectToServer();
+                login();
             }
         });
 
